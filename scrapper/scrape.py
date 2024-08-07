@@ -4,7 +4,7 @@ import scrapy
 class QuotesSpider(scrapy.Spider):
     name = "reddit"
     start_urls = [
-        "https://www.reddit.com/r/AskReddit/"
+        "https://www.reddit.com/r/shortscarystories/"
     ]
 
     def parse(self, response):
@@ -14,5 +14,14 @@ class QuotesSpider(scrapy.Spider):
     def getPost(self, response):
         yield {
             "title": response.xpath("//h1[starts-with(@id,'post-title-')]/text()").get().strip(),
-            "comment": "TODO"
+            "text": self.parseText(
+                response.xpath("//div[starts-with(@data-post-click-location, 'text-body')]/div/p/text()").getall())
         }
+
+    def parseText(self, text):
+        output = []
+        for line in text:
+            newLine = line.strip()
+            if len(newLine) > 0:
+                output.append(newLine)
+        return output
