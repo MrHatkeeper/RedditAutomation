@@ -1,10 +1,9 @@
 import scrapy
 
-
 class QuotesSpider(scrapy.Spider):
     name = "reddit"
     start_urls = [
-        "https://www.reddit.com/r/shortscarystories/"
+        "https://www.reddit.com/r/shortscarystories/rising/"
     ]
 
     def parse(self, response):
