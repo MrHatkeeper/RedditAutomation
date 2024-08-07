@@ -2,26 +2,17 @@ import scrapy
 
 
 class QuotesSpider(scrapy.Spider):
-    name = "quotes"
-    startUrls = [
-        "https://www.reddit.com/r/AskReddit/",
+    name = "reddit"
+    start_urls = [
+        "https://www.reddit.com/r/AskReddit/"
     ]
 
     def parse(self, response):
-        for post in response.css("article"):
-            # output.append(post.xpath("//shreddit-post/a[starts-with(@id,'post-title-')]").attrib["href"])
-            yield {
-                "xdd": post.xpath("//shreddit-post/a[starts-with(@id,'post-title-')]/text()").get() #.attrib["href"]
-            }
-        # self.getPostsContent(response, postsUrl)
+        urls = response.xpath("//a[starts-with(@id,'post-title-')]/@href").getall()
+        yield from response.follow_all(urls, self.getPost)
 
-
-"""    def getPostsUrls(self, response):
-        output = list()
-        for post in response.css("article"):
-            output.append(post.xpath("//shreddit-post/a[starts-with(@id,'post-title-')]").attrib["href"])
-        return output
-
-    def getPostsContent(self, response, urls):
-        for post in urls:
-            response.follow(post, callback=self.parse)"""
+    def getPost(self, response):
+        yield {
+            "title": response.xpath("//h1[starts-with(@id,'post-title-')]/text()").get().strip(),
+            "comment": "TODO"
+        }
